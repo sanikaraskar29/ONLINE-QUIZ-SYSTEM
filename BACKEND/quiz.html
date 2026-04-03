@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Online Quiz System</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+button { margin: 5px; }
+textarea { width: 400px; height: 100px; }
+input { width: 400px; margin: 5px 0; }
+</style>
+</head>
+<body>
+
+<h1>Online Quiz System</h1>
+
+<!-- Section: Get All Quizzes -->
+<button onclick="getQuizzes()">Show All Quizzes</button>
+<pre id="output"></pre>
+
+<hr>
+
+<!-- Section: Add Quiz -->
+<h2>Add Quiz</h2>
+<input type="text" id="title" placeholder="Quiz Title"><br>
+<textarea id="description" placeholder="Quiz Description"></textarea><br>
+<button onclick="addQuiz()">Add Quiz</button>
+
+<hr>
+
+<!-- Section: Delete Quiz -->
+<h2>Delete Quiz</h2>
+<input type="text" id="deleteId" placeholder="Quiz ID to delete"><br>
+<button onclick="deleteQuiz()">Delete Quiz</button>
+
+<hr>
+
+<!-- Section: Update Quiz -->
+<h2>Update Quiz</h2>
+<input type="text" id="updateId" placeholder="Quiz ID to update"><br>
+<input type="text" id="updateTitle" placeholder="New Title"><br>
+<textarea id="updateDescription" placeholder="New Description"></textarea><br>
+<button onclick="updateQuiz()">Update Quiz</button>
+
+<script>
+const apiBase = "http://localhost:8080/api/quizzes";
+
+// GET all quizzes
+async function getQuizzes() {
+    const res = await fetch(apiBase);
+    const data = await res.json();
+    document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+}
+
+// POST add quiz
+async function addQuiz() {
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+
+    const res = await fetch(apiBase, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description })
+    });
+    alert(res.ok ? "Quiz added!" : "Error adding quiz");
+    getQuizzes();
+}
+
+// DELETE quiz
+async function deleteQuiz() {
+    const id = document.getElementById("deleteId").value;
+    const res = await fetch(`${apiBase}/${id}`, { method: "DELETE" });
+    alert(res.ok ? "Quiz deleted!" : "Error deleting quiz");
+    getQuizzes();
+}
+
+// PUT update quiz
+async function updateQuiz() {
+    const id = document.getElementById("updateId").value;
+    const title = document.getElementById("updateTitle").value;
+    const description = document.getElementById("updateDescription").value;
+
+    const res = await fetch(`${apiBase}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description })
+    });
+    alert(res.ok ? "Quiz updated!" : "Error updating quiz");
+    getQuizzes();
+}
+</script>
+
+</body>
+</html>
